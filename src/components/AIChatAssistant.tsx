@@ -42,7 +42,13 @@ const AIChatAssistant: React.FC<{ activeTab?: string }> = ({ activeTab }) => {
     setIsLoading(true);
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const apiKey = (import.meta.env && import.meta.env.VITE_GEMINI_API_KEY);
+      if (!apiKey) {
+        setMessages(prev => [...prev, { role: 'model', content: "❌ Chave de IA não configurada. Por favor, adicione a chave VITE_GEMINI_API_KEY nas configurações do Vercel." }]);
+        setIsLoading(false);
+        return;
+      }
+      const ai = new GoogleGenAI(apiKey);
       const contextPrompt = `O usuário está atualmente na aba: ${activeTab}. `;
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
