@@ -92,7 +92,6 @@ const BusinessManager: React.FC<{ showToast?: (m: string, t?: 'success' | 'error
     { id: 'stock', label: 'Estoque de Chapas', icon: '📦' },
     { id: 'fixed-costs', label: 'Custos Operacionais', icon: '🏭' },
     { id: 'taxes', label: 'Tributação e MEI', icon: '🏛️' },
-    { id: 'cloud', label: 'Supabase / Cloud', icon: '☁️' },
     { id: 'ai-settings', label: 'IA e Assistente', icon: '🤖' },
     { id: 'sync', label: 'Backup e Segurança', icon: '🔄' }
   ];
@@ -369,65 +368,6 @@ const BusinessManager: React.FC<{ showToast?: (m: string, t?: 'success' | 'error
                         <button onClick={() => fileInputRef.current?.click()} className="bg-emerald-500 text-white px-16 py-5 rounded-2xl font-black text-[11px] uppercase shadow-2xl hover:scale-105 transition-all">Selecionar Arquivo JSON</button>
                      </div>
                   </div>
-               </div>
-            )}
-
-             {activeSubTab === 'cloud' && (
-               <div className="animate-in space-y-12">
-                  <div className="border-b border-slate-50 pb-10">
-                     <h3 className="text-4xl font-black text-slate-900 uppercase tracking-tighter">Integração Supabase</h3>
-                     <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-2">Conecte seu sistema a um banco de dados na nuvem para sincronização multi-dispositivo.</p>
-                  </div>
-
-                  <div className="bg-slate-50 p-12 rounded-[4rem] border border-slate-100 space-y-8">
-                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-6">
-                           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm">⚡</div>
-                           <div>
-                              <h4 className="text-base font-black text-slate-900 uppercase">Status da Conexão</h4>
-                              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                 {import.meta.env.VITE_SUPABASE_URL ? '✅ Configurado via Variáveis de Ambiente' : '❌ Não Configurado'}
-                              </p>
-                           </div>
-                        </div>
-                        <div className={`px-6 py-2 rounded-full text-[10px] font-black uppercase ${import.meta.env.VITE_SUPABASE_URL ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
-                           {import.meta.env.VITE_SUPABASE_URL ? 'Ativado' : 'Offline'}
-                        </div>
-                     </div>
-
-                     <div className="grid grid-cols-1 gap-6">
-                        <div>
-                           <label className="text-[10px] font-black text-slate-400 uppercase block mb-3 tracking-widest">URL do Projeto Supabase</label>
-                           <input 
-                              className="w-full bg-white rounded-2xl px-8 py-5 font-black text-xs text-slate-900 outline-none shadow-sm border-none" 
-                              placeholder="https://xyz.supabase.co"
-                              value={cloudConfig.url}
-                              onChange={e => setCloudConfig({...cloudConfig, url: e.target.value})}
-                              disabled={!!import.meta.env.VITE_SUPABASE_URL}
-                           />
-                        </div>
-                        <div>
-                           <label className="text-[10px] font-black text-slate-400 uppercase block mb-3 tracking-widest">Chave de API Anon (Public Key)</label>
-                           <input 
-                              type="password"
-                              className="w-full bg-white rounded-2xl px-8 py-5 font-black text-xs text-slate-900 outline-none shadow-sm border-none" 
-                              placeholder="eyJhbG..."
-                              value={cloudConfig.apiKey}
-                              onChange={e => setCloudConfig({...cloudConfig, apiKey: e.target.value})}
-                              disabled={!!import.meta.env.VITE_SUPABASE_ANON_KEY}
-                           />
-                        </div>
-                     </div>
-
-                     <div className="bg-amber-50 p-8 rounded-[2.5rem] border border-amber-100 flex gap-6">
-                        <span className="text-3xl">⚠️</span>
-                        <p className="text-[10px] font-bold text-amber-700 uppercase leading-relaxed">
-                           Atenção: Ao ativar o Supabase, seus dados serão sincronizados automaticamente com a nuvem. Certifique-se de aplicar as Migrations SQL no seu painel do Supabase antes de ativar.
-                        </p>
-                     </div>
-                  </div>
-                  
-                  <button onClick={savePricingSettings} className="w-full bg-[#0D4C4F] text-white py-10 rounded-[3rem] font-black text-sm uppercase shadow-2xl hover:scale-[1.01] transition-all">Salvar Configurações de Nuvem</button>
                </div>
             )}
 

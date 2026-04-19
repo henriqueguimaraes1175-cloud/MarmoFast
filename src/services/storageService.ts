@@ -1,6 +1,5 @@
 
 import { Quote, Product, CompanyProfile, Client, StockItem } from '../types';
-import { supabase, isSupabaseEnabled } from '../lib/supabaseClient';
 
 const STORES = {
   QUOTES: 'marmofast_quotes',
@@ -13,25 +12,12 @@ const STORES = {
 
 export const storageService = {
   getQuotes: async (): Promise<Quote[]> => {
-    if (isSupabaseEnabled()) {
-      const { data, error } = await supabase
-        .from('quotes')
-        .select('*')
-        .order('updated_at', { ascending: false });
-      if (!error && data) return data as Quote[];
-    }
     const data = localStorage.getItem(STORES.QUOTES);
     return data ? JSON.parse(data) : [];
   },
 
   saveQuotes: async (quotes: Quote[], lastQuote?: Quote) => {
     localStorage.setItem(STORES.QUOTES, JSON.stringify(quotes));
-
-    if (isSupabaseEnabled() && lastQuote) {
-      await supabase
-        .from('quotes')
-        .upsert({ ...lastQuote, updated_at: Date.now() });
-    }
     
     // Automation: Update client history if quote is approved
     if (lastQuote && (lastQuote.status === 'Aprovado' || lastQuote.status === 'Finalizado')) {
@@ -46,6 +32,8 @@ export const storageService = {
         
         const updatedHistory = Array.from(new Set([...(client.materialsHistory || []), ...quoteMaterials]));
         
+        // Only add to total spent if this quote wasn't already accounted for (simplified check)
+        // In a real app we'd track which quotes are already summed
         const alreadySummed = (client.quoteIds || []).includes(lastQuote.id);
         
         clients[clientIndex] = {
@@ -64,36 +52,16 @@ export const storageService = {
   },
 
   getProducts: async (): Promise<Product[]> => {
-    if (isSupabaseEnabled()) {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*');
-      if (!error && data) return data as Product[];
-    }
     const data = localStorage.getItem(STORES.PRODUCTS);
     return data ? JSON.parse(data) : [];
   },
 
   saveProducts: async (products: Product[]) => {
     localStorage.setItem(STORES.PRODUCTS, JSON.stringify(products));
-    if (isSupabaseEnabled()) {
-      // For simplicity, we upsert every change if it's a many-to-one sync
-      // but usually we'd upsert single products.
-      // Here we assume saveProducts is called for the whole list
-      await supabase.from('products').upsert(products.map(p => ({ ...p, updated_at: Date.now() })));
-    }
     window.dispatchEvent(new Event('productsUpdated'));
   },
 
   getProfile: async (): Promise<CompanyProfile> => {
-    if (isSupabaseEnabled()) {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .limit(1)
-        .single();
-      if (!error && data) return data as CompanyProfile;
-    }
     const data = localStorage.getItem(STORES.PROFILE);
     if (data) return JSON.parse(data);
     
@@ -117,9 +85,6 @@ export const storageService = {
 
   saveProfile: async (profile: CompanyProfile) => {
     localStorage.setItem(STORES.PROFILE, JSON.stringify(profile));
-    if (isSupabaseEnabled()) {
-       await supabase.from('profiles').upsert({ ...profile, updated_at: new Date().toISOString() });
-    }
     window.dispatchEvent(new Event('profileUpdated'));
   },
 
@@ -132,39 +97,21 @@ export const storageService = {
   },
 
   getClients: async (): Promise<Client[]> => {
-    if (isSupabaseEnabled()) {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('*');
-      if (!error && data) return data as Client[];
-    }
     const data = localStorage.getItem(STORES.CLIENTS);
     return data ? JSON.parse(data) : [];
   },
 
   saveClients: async (clients: Client[]) => {
     localStorage.setItem(STORES.CLIENTS, JSON.stringify(clients));
-    if (isSupabaseEnabled()) {
-      await supabase.from('clients').upsert(clients.map(c => ({ ...c, updated_at: Date.now() })));
-    }
   },
 
   getStock: async (): Promise<StockItem[]> => {
-    if (isSupabaseEnabled()) {
-      const { data, error } = await supabase
-        .from('stock')
-        .select('*');
-      if (!error && data) return data as StockItem[];
-    }
     const data = localStorage.getItem(STORES.STOCK);
     return data ? JSON.parse(data) : [];
   },
 
   saveStock: async (stock: StockItem[]) => {
     localStorage.setItem(STORES.STOCK, JSON.stringify(stock));
-    if (isSupabaseEnabled()) {
-      await supabase.from('stock').upsert(stock.map(s => ({ ...s, updated_at: Date.now() })));
-    }
   },
 
   exportFullDatabase: async () => {
@@ -193,11 +140,11 @@ export const storageService = {
       if (data.products) await storageService.saveProducts([...currentProducts, ...data.products]);
       if (data.clients) await storageService.saveClients([...currentClients, ...data.clients]);
     } else {
-      if (data.quotes) await storageService.saveQuotes(data.quotes);
-      if (data.products) await storageService.saveProducts(data.products);
-      if (data.profile) await storageService.saveProfile(data.profile);
-      if (data.clients) await storageService.saveClients(data.clients);
-      if (data.stock) await storageService.saveStock(data.stock);
+      if (data.quotes) localStorage.setItem(STORES.QUOTES, JSON.stringify(data.quotes));
+      if (data.products) localStorage.setItem(STORES.PRODUCTS, JSON.stringify(data.products));
+      if (data.profile) localStorage.setItem(STORES.PROFILE, JSON.stringify(data.profile));
+      if (data.clients) localStorage.setItem(STORES.CLIENTS, JSON.stringify(data.clients));
+      if (data.stock) localStorage.setItem(STORES.STOCK, JSON.stringify(data.stock));
     }
   }
 };
