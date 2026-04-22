@@ -1,20 +1,25 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# MarmoFast Pro
 
-# Run and deploy your AI Studio app
+Sistema ágil de gestão de orçamentos para marmorarias, focado em velocidade de precificação e profissionalismo.
 
-This contains everything you need to run your app locally.
+## Funcionalidades
+- **Painel Executivo:** Gestão de performance e saúde financeira.
+- **Turbo (Calculadora):** Precificação rápida com markup divisor e quebras técnicas.
+- **Gestão de Vendas:** Controle de orçamentos e geração de PDFs profissionais.
+- **Catálogo de Produtos:** Cadastro de materiais com fichas técnicas.
+- **Documentos:** Gerador de contratos e ordens de serviço.
+- **Otimização de Corte (Nesting):** Planejamento de corte de chapas (Layout).
+- **IA Assistente:** Suporte técnico para marmoristas integrado.
 
-View your app in AI Studio: https://ai.studio/apps/1b1b8f2a-02ab-4d22-a13c-2829e8bf3ab0
+## Tecnologias
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- Lucide React (Ícones)
+- Google Gemini API (Assistente AI)
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Configuração
+1. Clone o repositório.
+2. Instale as dependências com `npm install`.
+3. Configure as variáveis de ambiente necessárias.
+4. Execute `npm run dev` para iniciar o servidor de desenvolvimento.
